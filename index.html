@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sims 4 Illness Diagnoser</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            text-align: left;
+        }
+        .illness-list li {
+            cursor: pointer;
+            padding: 5px;
+            border-bottom: 1px solid #ddd;
+        }
+        .illness-list li:hover {
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+    <h2>Sims 4 Illness Diagnoser</h2>
+    <p>Select symptoms to find the matching illness.</p>
+
+    <div class="container">
+        <div id="symptoms-container"></div>
+        <button onclick="resetSelection()">Reset</button>
+        <h3>Possible Illnesses:</h3>
+        <ul id="illness-list" class="illness-list"></ul>
+    </div>
+
+    <script>
+        // List of illnesses and symptoms
+        const illnesses = {
+            "Itchy Plumbob": ["Itchy", "Giggling", "Tiger stripes on body", "Spots on body"],
+            "Gas and Giggles": ["Rubs stomach", "Giggling", "Food thought bubble", "Thermometer thought bubble", "Tiger stripes on body", "Passing gas"],
+            "The Triple Threat": ["Stars spinning over head", "Sneezing", "Coughing", "Tiger stripes on body", "Spots on body", "Whirly spots on body"],
+            "Llama Flu": ["Sneezing", "Coughing", "Spots on body"],
+            "Burnin’ Belly": ["Rubs stomach", "Feverish", "Pepto thought bubble"],
+            "Bloaty Head": ["Steam coming from ears", "Headache"],
+            "Sweaty Shivers": ["Feverish", "Spots on body", "Itchy", "Thermometer thought bubble"],
+            "Starry Eyes": ["Stars spinning over head", "Whirly spots on body", "Dizzy"]
+        };
+
+        // Get unique symptoms
+        const allSymptoms = [...new Set(Object.values(illnesses).flat())];
+
+        // Store selected symptoms
+        let selectedSymptoms = [];
+
+        // Initialize UI
+        function init() {
+            const symptomsContainer = document.getElementById("symptoms-container");
+            allSymptoms.forEach(symptom => {
+                const checkbox = document.createElement("input");
+                checkbox.type = "checkbox";
+                checkbox.value = symptom;
+                checkbox.id = symptom;
+                checkbox.onchange = updateIllnesses;
+
+                const label = document.createElement("label");
+                label.htmlFor = symptom;
+                label.textContent = symptom;
+
+                const div = document.createElement("div");
+                div.appendChild(checkbox);
+                div.appendChild(label);
+
+                symptomsContainer.appendChild(div);
+            });
+
+            updateIllnesses(); // Show all illnesses initially
+        }
+
+        // Update illness list based on selected symptoms
+        function updateIllnesses() {
+            const illnessList = document.getElementById("illness-list");
+            illnessList.innerHTML = "";
+
+            // Get checked symptoms
+            selectedSymptoms = allSymptoms.filter(symptom => document.getElementById(symptom).checked);
+
+            for (const [illness, symptoms] of Object.entries(illnesses)) {
+                const li = document.createElement("li");
+                li.textContent = illness;
+                li.onclick = () => alert(`${illness} symptoms: ${symptoms.join(', ')}`);
+
+                if (selectedSymptoms.length === 0 || selectedSymptoms.every(symptom => symptoms.includes(symptom))) {
+                    illnessList.appendChild(li);
+                }
+            }
+        }
+
+        // Reset selection
+        function resetSelection() {
+            selectedSymptoms = [];
+            document.querySelectorAll("input[type=checkbox]").forEach(cb => cb.checked = false);
+            updateIllnesses();
+        }
+
+        // Load everything
+        window.onload = init;
+    </script>
+</body>
+</html>
+
